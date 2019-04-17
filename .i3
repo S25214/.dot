@@ -81,7 +81,7 @@ bindsym $mod+e layout toggle split
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+# bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
@@ -99,7 +99,7 @@ set $ws5 "5"
 set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
-set $ws9 "9:"
+set $ws9 "9"
 set $ws10 "10:"
 
 # switch to workspace
@@ -158,7 +158,7 @@ mode "resize" {
         bindsym $mod+r mode "default"
 }
 
-bindsym $mod+r mode "resize"
+#bindsym $mod+r mode "resize"
 
 set $bg-color 	         #2f343f
 set $inactive-bg-color   #2f343f
@@ -216,8 +216,14 @@ exec_always nvidia-settings --load-config-only
 assign [class="Firefox-esr"] $ws2
 assign [class="Wine"] $ws3
 assign [class="Lutris"] $ws3
-assign [class="Steam"] $ws9
+assign [class="Steam"] $ws3
 assign [class="discord"] $ws10
+
+# custom resize tile
+bindsym $mod+Ctrl+Left resize shrink width 1 px or 1 ppt
+bindsym $mod+Ctrl+Down resize grow height 1 px or 1 ppt
+bindsym $mod+Ctrl+Up resize shrink height 1 px or 1 ppt
+bindsym $mod+Ctrl+Right resize grow width 1 px or 1 ppt
 
 # custom keybind
 bindsym $mod+shift+x exec i3lock -i ~/Pictures/lockscreen.png
