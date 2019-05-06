@@ -30,7 +30,7 @@ font pango:System San Francisco Display 9
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec st
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -64,27 +64,27 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+h split h
-
+#bindsym $mod+h split h
+bindsym $mod+o split toggle
 # split in vertical orientation
-bindsym $mod+v split v
+#bindsym $mod+v split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+#bindsym $mod+s layout stacking
+#bindsym $mod+w layout tabbed
+#bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-# bindsym $mod+space focus mode_toggle
+bindsym $mod+space focus mode_toggle
 
 # focus the parent container
-bindsym $mod+a focus parent
+#bindsym $mod+a focus parent
 
 # focus the child container
 #bindsym $mod+d focus child
@@ -92,14 +92,14 @@ bindsym $mod+a focus parent
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
 set $ws1 "1:"
-set $ws2 "2:"
+set $ws2 "2:"
 set $ws3 "3:"
-set $ws4 "4"
-set $ws5 "5"
+set $ws4 "4:"
+set $ws5 "5:"
 set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
-set $ws9 "9"
+set $ws9 "9:"
 set $ws10 "10:"
 
 # switch to workspace
@@ -131,7 +131,7 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to logout of i3?' -B ' Logout ' 'i3-msg exit'"
+#bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to logout of i3?' -B ' Logout ' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -175,7 +175,8 @@ client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color      
 
 
 # windows gap
-for_window [class="^.*"] border pixel 0 
+for_window [class="^.*"] border pixel 0
+smart_gaps on
 gaps inner 8 
 
 # Start i3bar to display a workspace bar (plus the system information i3statusi
@@ -193,50 +194,88 @@ bar {
 }
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 3 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 3 -5% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 3 toggle # mute sound
+bindsym $mod+Shift+F4 exec --no-startup-id pactl set-default-sink $(pacmd list-sinks | grep -E "[^*] index: [0-9]+" | sed -r -e "s/.*([0-9]+)/\1/g")
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle # mute sound
 
 # Sreen brightness controls
 # bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
 # bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
 
 # Media player controls
-bindsym XF86AudioPlay exec playerctl play
-bindsym XF86AudioPause exec playerctl pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioPlay exec --no-startup-id st -e cmus-remote -u
+#bindsym XF86AudioPause exec --no-startup-id st -e cmus-remote -u
+bindsym XF86AudioNext exec --no-startup-id st -e cmus-remote -n
+bindsym XF86AudioPrev exec --no-startup-id st -e cmus-remote -r
 
 # startup
-exec_always feh --bg-scale ~/Pictures/wallpaper.png
-exec_always compton -f -i 0.9
+exec_always feh --bg-scale --no-xinerama ~/Pictures/dualwallpaper1.jpg
+exec_always compton -f -i 0.8 
 exec_always nvidia-settings --load-config-only
+exec_always --no-startup-id xrdb ~/.Xresources
+exec_always --no-startup-id xset r rate 250 40
+exec_always --no-startup-id xinput --set-prop 14 299 -0.3
 
 # bind to workspace
 assign [class="Firefox-esr"] $ws2
-assign [class="Wine"] $ws3
-assign [class="Lutris"] $ws3
-assign [class="Steam"] $ws3
+#for_window [class="Firefox-esr"] fullscreen enable
+assign [class="Chromium"] $ws2
+#for_window [class="Chromium"] fullscreen enable
+assign [class="Reddit"] $ws5
+assign [class="Music"] $ws4
+#assign [class="Lutris"] $ws3
+#assign [class="Steam"] $ws3
 assign [class="discord"] $ws10
 
 # custom resize tile
-bindsym $mod+Ctrl+Left resize shrink width 1 px or 1 ppt
-bindsym $mod+Ctrl+Down resize grow height 1 px or 1 ppt
-bindsym $mod+Ctrl+Up resize shrink height 1 px or 1 ppt
-bindsym $mod+Ctrl+Right resize grow width 1 px or 1 ppt
+bindsym $mod+Ctrl+Left resize shrink width 2 px or 2 ppt
+bindsym $mod+Ctrl+Down resize grow height 2 px or 2 ppt
+bindsym $mod+Ctrl+Up resize shrink height 2 px or 2 ppt
+bindsym $mod+Ctrl+Right resize grow width 2 px or 2 ppt
+
+# run
+bindsym $mod+d exec rofi -show run -theme ~/.config/rofi/flat-dark -lines 5 -width 30
+
+# LibreOffice
+bindsym $mod+shift+bracketright mode "$mode_libre"
+set $mode_libre (w)riter, (i)mpress, (c)alc, (d)raw, (b)ase, (m)ath
+mode "$mode_libre" {
+    bindsym w exec --no-startup-id lowriter, mode "default"
+    bindsym i exec --no-startup-id loimpress, mode "default"
+    bindsym c exec --no-startup-id localc, mode "default"
+    bindsym d exec --no-startup-id lodraw, mode "default"
+    bindsym b exec --no-startup-id lobase, mode "default"
+    bindsym m exec --no-startup-id lomath, mode "default"
+
+    # exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# Set shut down, restart and locking features
+bindsym $mod+shift+e mode "$mode_system"
+set $mode_system (s)hutdown, (r)eboot
+mode "$mode_system" {
+    bindsym r exec --no-startup-id reboot, mode "default"
+    bindsym s exec --no-startup-id shutdown now, mode "default"
+
+    # exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
 
 # custom keybind
 bindsym $mod+shift+x exec i3lock -i ~/Pictures/lockscreen.png
-for_window [class="Firefox-esr"] fullscreen enable
-bindsym $mod+shift+w exec firefox youtube.com
+bindsym $mod+shift+w exec chromium
+bindsym $mod+shift+o workspace $ws3; exec --no-startup-id st -e lutris lutris:rungameid/3
+bindsym $mod+shift+l workspace $ws3; exec --no-startup-id st -e lutris lutris:rungameid/2
 bindsym $mod+shift+d exec discord
 bindsym $mod+shift+t exec nautilus
-bindsym $mod+shift+s exec steam
-bindsym $mod+d exec rofi -show run -theme ~/.config/rofi/flat-dark -lines 5 -width 30
-bindsym $mod+shift+m exec i3-sensible-terminal -e cmus
-bindsym $mod+shift+h exec i3-sensible-terminal -e htop
-bindsym $mod+shift+v exec i3-sensible-terminal -e vi
-bindsym $mod+shift+f exec i3-sensible-terminal -e vifm
-bindsym $mod+shift+l exec lutris
-bindsym $mod+shift+backslash exec i3-sensible-terminal -e vi ~/.config/i3/config
-bindsym $mod+shift+slash exec i3-sensible-terminal -e msfconsole 
+bindsym $mod+shift+s workspace $ws9; exec steam
+bindsym $mod+shift+m exec st -c Music -e cmus
+bindsym $mod+shift+v exec st -e vi
+bindsym $mod+shift+f exec st -e ranger
+bindsym $mod+shift+equal exec st -e gotop
+bindsym $mod+shift+backslash exec st -e vi ~/.config/i3/config
+bindsym $mod+shift+slash exec st -c Reddit -e rtv 
