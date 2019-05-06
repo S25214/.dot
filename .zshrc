@@ -94,12 +94,67 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# FZF fuzzy
+# FZF fuzzy ##############################################################
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPS="--extended"
 
-#Powerlevel
+
+# VIM mode ################################################################
+
+# Updates editor information when the keymap changes.
+export KEYTIMEOUT=1
+function zle-keymap-select() {
+  # update keymap variable for the prompt
+  VI_KEYMAP=$KEYMAP
+
+  zle reset-prompt
+  zle -R
+}
+
+zle -N zle-keymap-select
+zle -N edit-command-line
+
+
+bindkey -v
+
+# allow v to edit the command line (standard behaviour)
+autoload -Uz edit-command-line
+bindkey -M vicmd 'v' edit-command-line
+
+# allow ctrl-p, ctrl-n for navigate history (standard behaviour)
+bindkey '^P' up-history
+bindkey '^N' down-history
+
+# allow ctrl-h, ctrl-w, ctrl-? for char and word deletion (standard behaviour)
+bindkey '^?' backward-delete-char
+bindkey '^h' backward-delete-char
+bindkey '^w' backward-kill-word
+
+# allow ctrl-r and ctrl-s to search the history
+bindkey '^r' history-incremental-search-backward
+bindkey '^s' history-incremental-search-forward
+
+# allow ctrl-a and ctrl-e to move to beginning/end of line
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
+
+# if mode indicator wasn't setup by theme, define default
+if [[ "$MODE_INDICATOR" == "" ]]; then
+  MODE_INDICATOR="%{$fg_bold[red]%}<%{$fg[red]%}<<%{$reset_color%}"
+fi
+
+function vi_mode_prompt_info() {
+  echo "${${VI_KEYMAP/vicmd/$MODE_INDICATOR}/(main|viins)/}"
+}
+
+# define right prompt, if it wasn't defined by a theme
+if [[ "$RPS1" == "" && "$RPROMPT" == "" ]]; then
+  RPS1='$(vi_mode_prompt_info)'
+fi
+
+
+# Powerlevel #################################################################
 
 POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
@@ -110,8 +165,16 @@ POWERLEVEL9K_STATUS_OK=true
 
 POWERLEVEL9K_COLOR_SCHEME='dark'
 
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs history time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(vi_mode status background_jobs history time)
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(user host dir dir_writable vcs)
+
+
+POWERLEVEL9K_VI_INSERT_MODE_STRING='%BI%b'
+POWERLEVEL9K_VI_COMMAND_MODE_STRING='%BN%b'
+POWERLEVEL9K_VI_MODE_INSERT_BACKGROUND='074'
+POWERLEVEL9K_VI_MODE_INSERT_FOREGROUND='235'
+POWERLEVEL9K_VI_MODE_NORMAL_BACKGROUND='220'
+POWERLEVEL9K_VI_MODE_NORMAL_FOREGROUND='235'
 
 POWERLEVEL9K_HOST_TEMPLATE="%2m"
 #POWERLEVEL9K_SSH_ICON="\uf2f6"
@@ -121,8 +184,10 @@ POWERLEVEL9K_HOST_LOCAL_BACKGROUND="242"
 POWERLEVEL9K_HOST_REMOTE_FOREGROUND="black"
 POWERLEVEL9K_HOST_LOCAL_FOREGROUND="black"
 
-POWERLEVEL9K_TIME_BACKGROUND='white'
+POWERLEVEL9K_TIME_ICON=''
+POWERLEVEL9K_TIME_BACKGROUND='244'
 POWERLEVEL9K_TIME_FOREGROUND='black'
+POWERLEVEL9K_TIME_FORMAT='%D{%H:%M:%S}'
 
 POWERLEVEL9K_USER_DEFAULT_BACKGROUND='211'
 POWERLEVEL9K_USER_DEFAULT_FOREGROUND='black'
@@ -151,7 +216,7 @@ POWERLEVEL9K_HISTORY_BACKGROUND='242'
 POWERLEVEL9K_STATUS_OK_BACKGROUND='238'
 POWERLEVEL9K_STATUS_ERROR_BACKGROUND='238'
 
-# shortcuts
+# shortcuts ######################################################################
 alias zshconfig="vi ~/.zshrc"
 alias tml="transmission-remote -l"
 alias tm="transmission-remote"
