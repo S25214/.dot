@@ -54,7 +54,10 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
-" Custom Configurations
+" Custom Configuration
+colorscheme desert
+set guifont=SauceCodePro\ Nerd\ Font\ 12
+set background=dark
 set autoindent
 set nu
 set rnu
